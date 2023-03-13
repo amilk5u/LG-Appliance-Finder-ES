@@ -1708,6 +1708,7 @@ function main() {
       let _judgmentStep = 'nextStep'; // 다음 스텝
       let _lastFinderIndex = configData.finderSetting.length - 1; // 마지막 스텝 인덱스
 
+      console.log(idx , _lastFinderIndex, idx === _lastFinderIndex)
       idx === _lastFinderIndex && resultChoice() // 마지막 스텝에서 result 화면실행
       // active 가 있을때 실행 & finderSetting 갯수보다 작으면 실행
       if (idx < _lastFinderIndex && $(this).hasClass('active')) {

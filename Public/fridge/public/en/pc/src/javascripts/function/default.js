@@ -17,7 +17,8 @@ const $applianceFinder = $('#applianceFinder'),
    $introAnimation = $applianceFinder.find("#introAnimation"),
    $popupStp3 = $applianceFinder.find('.popup_step03'),
    $subContain = $applianceFinder.find('.sub_contain'),
-   $queTitle = $applianceFinder.find('.que_title');
+   $queTitle = $applianceFinder.find('.que_title'),
+   $finderResult = $applianceFinder.find('#finderResult');
 
 /* Button */
 const $nextBtn = $applianceFinder.find('#nextStepBtn'),
@@ -116,6 +117,7 @@ const configData = {
       questionText: 'step01 질문?',
       defaultScreenImg: 'step01/que_img00.png',
       singleOption: true, // 단일 옵션
+      resultContent: true,
       option: [
          {
             value: MULTI,
@@ -198,6 +200,7 @@ const configData = {
    step02: {
       questionText: 'step02 질문?',
       allSelectOption: true,
+      resultContent: true,
       option: [
          {
             value: CAPACITY_UNDER_400L,
@@ -306,6 +309,7 @@ const configData = {
       defaultScreenImg: 'step04/que_img01.png',
       allSelectOption: true,
       anythingOption: true,
+      resultContent: true,
       option: [
          {
             value: PLUMBED,
@@ -344,7 +348,6 @@ const configData = {
    step05: {
       questionText: 'step05 질문?',
       defaultScreenImg: 'step04/que_img01.png',
-      allSelectOption: true,
       option: [
          {
             value: PURE_N_FRESH,
@@ -368,7 +371,7 @@ const configData = {
             }
          },
          {
-            value: THINKQ,
+            value: ENERGY_GRADE_A,
             content: 'Senza allacciamento idrico </br>(solo acqua)',
             DataNon: true,
          },
@@ -413,12 +416,12 @@ const configData = {
       productColorImg: ['_black_popup_img', '_steel_popup_img', '_silver_popup_img', '_white_popup_img', '_beige_popup_img'], // step06 인터렉션 페이지 컬러매칭 이미지 뿌리기
       option: [
          {
-            value: ENERGY_GRADE_A,
-            content: 'ENERGY_GRADE_A',
+            value: BLACK,
+            content: 'BLACK',
             relevantData: {
-               description: 'Goditi dell’acqua sempre fresca e ghiaccio a cubetti o tritato, grazie al collegamento diretto a un rubinetto dell’acqua dedicato.',
+               description: 'BLACK',
                qnaScreenImg: 'que_img01.png',
-               interactionPage: 'silver',
+               interactionPage: 'black',
             }
          },
          {
@@ -429,7 +432,7 @@ const configData = {
                   head: 'STAINLESS head',
                   detail: 'STAINLESS detail'
                },
-               interactionPage: 'silver',
+               interactionPage: 'stainless',
                qnaScreenImg: 'que_img02.png',
 
             }
@@ -447,14 +450,14 @@ const configData = {
             }
          },
          {
-            value: ENERGY_GRADE_B,
-            content: 'ENERGY_GRADE_B',
+            value: WHITE,
+            content: 'WHITE',
             relevantData: {
                description: {
-                  head: 'ENERGY_GRADE_B',
-                  detail: 'ENERGY_GRADE_B 1`'
+                  head: 'WHITE',
+                  detail: 'WHITE 1`'
                },
-               interactionPage: 'silver',
+               interactionPage: 'white',
                qnaScreenImg: 'que_img04.png',
             }
          },

@@ -5,13 +5,15 @@ function main() {
    let _defaultScreenImg;
    let _lastFinderIndex = Object.values(configData).length - 1;
 
+   let enabledOptions = 0; // Button All Count
+   let activeOption = 0; // Active Count
+
    class Subject {
       constructor() {
          this.selectedParameters = []; // Filter Push 
          this.stepCount = []; // Acitve Count
          this.selectedProduct; // 셀렉된 제품 데이터 
          this.duplicationDel = [];
-         // this.selectAllArray = []; // SELECTALL 배열
       }
 
       /* 초기 세팅 */
@@ -56,7 +58,7 @@ function main() {
       /* 마크업 초기화 & 생성 */
       setMarkupDate() {
          // console.log('index : ', idx, '--------------------------------------------------------------------');
-         _currentStructural = Object.values(configData)[idx]; // 현재 스텝 마크업 구조
+         _currentStructural = Object.values(configData)[idx];
          _currentStep = Object.keys(configData)[idx];
          _questionText = _currentStructural.questionText;
          _defaultScreenImg = _currentStructural.defaultScreenImg;
@@ -100,7 +102,7 @@ function main() {
                subStepItem.option.forEach(function (subOption) {
                   optionHtml += `<button class="option_btn" type="button" data-value="${subOption.value}"><p>${subOption.content}</p></button>`;
                });
-               $selectContainer.append(`<li><span>${Object.keys(_currentStructural.subStep)[subStepIndex]}<div><em>${multipleSelectionContent}</em></div> </span><div>${optionHtml}</div></li>`);
+               $selectContainer.append(`<li><span>${Object.keys(_currentStructural.subStep)[subStepIndex]}<div><em>${multipleSelectionContent}</em></div> </span><div class="option_wrap">${optionHtml}</div></li>`);
             });
          }
          if (_currentStructural.anythingOption) {
@@ -118,29 +120,44 @@ function main() {
          } else {
             // this.optionDisabled();
          }
+
+
+         let resultOptionArray = [];
+         let resultOption = [];
+         let finalResultContent = []; // 최종 텍스트 배열
+         Object.values(configData).some((element) => {
+            if (element.resultContent) {
+               resultOptionArray.push(element.option);
+               element.option.filter(function (item) {
+                  resultOption.push(item.value);
+               });
+            }
+         });
+         let intersection = resultOption.filter((it) => applianceFinder.selectedParameters.includes(it))
+         resultOptionArray.some((element) => {
+            let subArray = [];
+            element.some((item) => {
+               intersection.some((i) => {
+                  if (i === item.value) {
+                     subArray.push(item.content);
+                  }
+               })
+            })
+            finalResultContent.push(subArray);
+         });
+
+         subArray.forEach((element) => {
+            console.log(element)
+         })
+
+
+
       }
 
       /* 선택 옵션 active & 해제 */
       optionActivation(element) {
          let _value = element.data('value');
-         let enabledOptions = 0; // All Select 제외한 나머지 버튼 count
-         let activeOption = 0; // 현재 클릭된 버튼 count 
-         // step 3       
-         let step3EnabledOptions = 0; // All Select 제외한 나머지 버튼 count
-         let step3ActiveOption = 0; // 현재 클릭된 버튼 count
 
-         $('.option_btn').each(function () {
-            if ($(this).attr('disabled') === undefined) {
-               enabledOptions++;
-            }
-         });
-
-         /* 상관없음 옵션 있을 시 활성화 버튼 -1 */
-         if ($('.anything_btn').length > 0) {
-            enabledOptions--;
-         }
-
-         // 항목 매칭된 데이터 뿌리기 & 선택된 데이터 push
          if (idx === 0) {
             // button active 
             $('.option_btn').removeClass('active');
@@ -152,7 +169,6 @@ function main() {
             if (!element.hasClass('active')) {
                element.addClass('active');
 
-               /* 상관없음 옵션을 선택 했을 때 */
                if (_value === ANYTHING) {
                   // 모두 해제
                   $('.option_btn').each(function () {
@@ -163,7 +179,6 @@ function main() {
                         applianceFinder.filterUpdate(_value, false);
                      }
                   });
-                  // applianceFinder.filterUpdate(_AllSelectKeyValue, false);
                   $('.all_select').removeClass('active');
                } else {
                   $('.anything_btn').removeClass('active');
@@ -171,24 +186,18 @@ function main() {
                }
                applianceFinder.filterUpdate(_value, true);
             } else {
-               // active 해제
                element.removeClass('active');
 
-               if (idx !== 2) {  //step03 제외
+               if (idx !== 2) {
                   applianceFinder.filterUpdate(_value, false);
-                  // applianceFinder.filterUpdate(_AllSelectKeyValue, false);
                   $('.all_select').removeClass('active');
                } else {
-                  //step03 
                   element.siblings('.all_select').removeClass('active');
                   applianceFinder.filterUpdate(_value, false);
-                  // applianceFinder.filterUpdate(_AllSelectKeyStep3Value, false);
                }
             }
 
             if (idx !== 2) {
-               // step03 제외
-               /* 상관없음 옵션을 선택 했을 때 */
                $('.option_btn').each(function () {
                   if ($(this).attr('disabled') === undefined) {
                      if ($(this).hasClass('active') && !$(this).hasClass('anything_btn')) {
@@ -196,37 +205,13 @@ function main() {
                      }
                   }
                });
-               /* 상관없음 옵션을 선택 했을 때 */
-               // console.log(activeOption === enabledOptions, activeOption, enabledOptions)
-               if (activeOption === enabledOptions) { // active 된 버튼 갯수와 전체버튼의 갯수와 일치 할 때 All Select 버튼 acitve 
-                  $('.all_select').addClass('active');
-                  // applianceFinder.filterUpdate(_AllSelectKeyValue, true);
-               }
-            } else {
-               // step03
-               let _divBtn = element.parent().find('.option_btn');
-
-               _divBtn.each(function () {
-                  if ($(this).attr('disabled') === undefined) { // acitve 없고, disabled 없고, All Select 가 아닌 버튼의 kay / value 값 
-                     step3EnabledOptions++;
-                  }
-               });
-               _divBtn.each(function () {
-                  if ($(this).attr('disabled') === undefined) {
-                     if ($(this).hasClass('active')) {
-                        step3ActiveOption++
-                     }
-                  }
-               });
-
-               // active 된 버튼 갯수와 전체버튼의 갯수와 일치 할 때 & 부모에 all Select 버튼이 존재 할 때
-               if (step3EnabledOptions === step3ActiveOption && element.parent().find('.all_select').length !== 0) {
-                  element.parent().find('.all_select').addClass('active');
-                  // applianceFinder.filterUpdate(_AllSelectKeyStep3Value, true);
-               }
             }
          }
-         applianceFinder.optionDataStructure(); // 옵션 구조 초기화 & 해당 옵션 내용 노출
+
+         this.stateOptions();
+         this.optionDataStructure(); // 옵션 구조 초기화 & 해당 옵션 내용 노출
+         this.countingUpdate();
+
       }
 
       /* 전체 선택 옵션 active & 해제 */
@@ -272,7 +257,6 @@ function main() {
                for (let i = 0; i < _answerBtnActive; i++) { // 버튼 active 카운팅 만큼 반복문 실행
                   this.selectedParameters.splice(-1, 1);
                }
-               // console.log(this.selectedParameters)
             }
          } else { // step03 
             let _notAllSelectOption = element.siblings(); // AllSelectOption 가 아닌 기존버튼
@@ -305,54 +289,54 @@ function main() {
                }
             }
          }
+
+         this.countingUpdate();
       }
 
-      /* 옵션의 상태 판단 */
-      stateOptions(_active) {
-         $('.option_btn').each(function () {
-            let _this = $(this);
-            // if (_active) {
-            //    if (_value === SELECTALL) {
-            //       if (!_this.hasClass('active') && _this.data('value') !== ANYTHING && _this.attr('disabled') === undefined) {
-            //          _optionArray.push(_this);
-            //          activeOption++;
-            //       }
-            //    } else if (_value === ANYTHING) {
-            //       if (_this.hasClass('active') && _this.data('value') !== ANYTHING) {
-            //          _optionArray.push(_this);
-            //       }
-            //    } else {
-            //       if (_this.data('value') === ANYTHING) {
-            //          _optionArray.push(_this);
-            //       }
-            //    }
-            // } else {
-            //    if (_value === SELECTALL) {
-            //       if (_this.attr('disabled') === undefined && _this.data('value') !== ANYTHING) {
-            //          activeOption--;
-            //          _optionArray.push(_this);
-            //       }
-            //    }
-            // }
+      /* 옵션의 상태 판단 & All Select */
+      stateOptions() {
+         enabledOptions = 0; // All Select 제외한 나머지 버튼 count
+         activeOption = 0; // 현재 클릭된 버튼 count 
 
-            // active 된 옵션 갯수 카운팅
-            // if (_this.hasClass('active')) {
-            //    activeOption++;
-            // }
-            // // 활성화된 옵션 갯수 카운팅
-            // if (_this.data('value') !== ANYTHING && _this.attr('disabled') === undefined) {
-            //    enabledOptions++;
-            // }
+         if (idx !== 2) {
+            $('.option_btn').each(function () {
+               if ($(this).attr('disabled') === undefined) {
+                  enabledOptions++;
+                  if ($(this).hasClass('active') && !$(this).hasClass('anything_btn')) {
+                     activeOption++;
+                  }
+               }
+            });
+
+            if ($('.anything_btn').length > 0) {
+               enabledOptions--;
+            }
+            if (activeOption === enabledOptions) {
+               $('.all_select').addClass('active');
+            }
+            // console.log('enabledOptions(옵션토탈갯수) : ', enabledOptions, 'activeOption(acitve갯수) : ', activeOption)
+         }
+
+         $('.option_wrap').each(function () {
+            let optionButtonNumber = $(this).find('.option_btn').index();
+            let activeNumber = 0;
+            $(this).find('.option_btn').each(function () {
+               if ($(this).hasClass('active')) {
+                  activeNumber++;
+               }
+               if (optionButtonNumber === activeNumber) {
+                  $(this).siblings('.all_select').addClass('active');
+               }
+            })
          });
-
       }
 
       /* 필터 업데이트 추가 & 삭제 */
       filterUpdate(_value, _state) {
          if (_state === true) {
             if (idx === 0) {
-               this.selectedParameters = []; 
-               this.selectedParameters.push(_value); 
+               this.selectedParameters = [];
+               this.selectedParameters.push(_value);
 
                _currentStructural.option.filter((element) => {
                   if (element.value === applianceFinder.selectedParameters[0]) {
@@ -368,18 +352,16 @@ function main() {
                return value !== _value;
             });
          }
-         console.log(this.selectedParameters)
-         applianceFinder.countingUpdate();
+         // console.log(this.selectedParameters)
       }
 
-      /* 카운팅 */
+      /* counting */
       countingUpdate() {
          if (this.stepCount[idx] !== undefined) {
             this.stepCount[idx] = $('.option_btn.active').length;
          } else {
             this.stepCount.push($('.option_btn.active').length);
          }
-         // console.log('stepCount : ', this.stepCount);
       }
 
 
@@ -398,8 +380,8 @@ function main() {
          }
 
          /* Option Active */
-         for (let i = 0; i < applianceFinder.stepCount.slice(-1)[0]; i++) {
-            let value = applianceFinder.selectedParameters[applianceFinder.selectedParameters.length - (1 + i)];
+         for (let i = 0; i < this.stepCount.slice(-1)[0]; i++) {
+            let value = this.selectedParameters[this.selectedParameters.length - (1 + i)];
             $('.option_btn').each(function () {
                let _this = $(this);
                let _value = _this.data('value');
@@ -409,8 +391,10 @@ function main() {
             });
          }
 
-         // taggingEvent(); // 태깅 함수
-         applianceFinder.sprayData(true);
+
+         this.stateOptions();
+         this.taggingEvent(); // 태깅 함수
+         this.sprayData(true);
       }
 
 
@@ -464,7 +448,6 @@ function main() {
          }
       }
 
-
       /* 옵션 구조 초기화 */
       optionDataStructure() {
          $loadMoreBtn.removeClass('active');
@@ -501,8 +484,7 @@ function main() {
          }
       }
 
-
-      // 해당 옵션 내용 노출
+      /* 해당 옵션 내용 노출 */
       sprayData(boolean) {
          let _moreCont;
          let lastValue = this.selectedParameters[this.selectedParameters.length - 1]; // 마지막 value 값
@@ -515,7 +497,6 @@ function main() {
          } else {
             exposureData = _currentStructural;
          }
-         // console.log(exposureData)
 
          /* 상관없음 옵션 데이터 미노출 */
          if (!exposureData) {
@@ -572,7 +553,82 @@ function main() {
             }
          }
       }
+
+      /* 태깅 텍스트 */
+      taggingEvent() {
+         console.log('태깅함수');
+      }
+
+      resultChoice() {
+         $applianceFinder.removeClass().addClass('result');
+         $centerImgWrap.attr('style', 'background-image: url(' + imgPath + this.selectedProduct.lastScreenImg + ')') // 배경 이미지 변경
+         // $(window).scrollTop(headerHeight);
+
+         let _valueArray = [[], [], []];
+         let _cont;
+
+
+
+
+
+
+         // for (let i = 0; i < selectedParameters.length; i++) {
+         //    let _selectValue = selectedParameters[i].split('=')[1];
+         //    for (let j = 0; j < configData.htmlData.length; j++) {
+         //       for (let p = 0; p < configData.htmlData[j].length; p++) {
+         //          let Html = configData.htmlData[j][p];
+         //          // 선택된 value 와 매칭, resultContent 가 있으면 해당 컨텐츠 추출
+         //          if (Html.value === _selectValue && Html.resultContent !== undefined) {
+         //             _cont = Html.content.replace(/(<([^>]+)>)/ig, ''); // br 태그 삭제
+         //             if (Html.resultContent === 'step01') {
+         //                _valueArray[0].push(_cont);
+         //             } else if (Html.resultContent === 'step05') {
+         //                _valueArray[1].push(_cont);
+         //             } else if (Html.resultContent === 'step06') {
+         //                _valueArray[2].push(_cont);
+         //             }
+         //          }
+         //       }
+         //    }
+         // }
+
+         // 선택한 content 뿌리기
+         // for (let i = 0; i < _valueArray.length; i++) {
+         //    let _selectResultTxt = '';
+         //    for (let j = 0; j < _valueArray[i].length; j++) {
+         //       if (i === 0) {
+         //          _selectResultTxt += _valueArray[i][j] + '<span>.</span>';
+         //       } else if (i === 1) {
+         //          if (j !== _valueArray[i].length - 1) {
+         //             _selectResultTxt += _valueArray[i][j] + '<span> & </span>';
+         //          } else {
+         //             _selectResultTxt += _valueArray[i][j] + '<span>.</span>';
+         //          }
+         //       } else if (i === 2) {
+         //          if (j !== _valueArray[i].length - 1) {
+         //             _selectResultTxt += _valueArray[i][j] + '<span>, </span>';
+         //          } else {
+         //             _selectResultTxt += _valueArray[i][j] + '';
+         //          }
+         //       }
+         //    }
+         //    $('#finderResult .txt_wrap dl').eq(i).append('<dd>' + _selectResultTxt + '</dd>');
+         // }
+
+         // step4 에서 아무것도 선택하지 않았을 때 텍스트 변경
+         // if (_valueArray[1].length < 1) {
+         //    $('#finderResult dl:nth-of-type(2)').remove();
+         //    $('#finderResult .txt_wrap').addClass('remove_color');
+         // }
+
+         // taggingEvent(_last); // 태깅 함수
+      }
    }
+
+
+
+
+
 
    const applianceFinder = new Subject();
 
@@ -582,11 +638,11 @@ function main() {
 
    /* Next Button */
    $nextBtn.on('click', function () {
-      if (idx < _lastFinderIndex) {
+      if (idx < _lastFinderIndex + 1) {
          idx++;
       }
+      idx === _lastFinderIndex + 1 && applianceFinder.resultChoice() // 마지막 스텝에서 result 화면실행
       applianceFinder.setMarkupDate();
-      // applianceFinder.matchingProductsSave();
    });
 
    /* Back Button */

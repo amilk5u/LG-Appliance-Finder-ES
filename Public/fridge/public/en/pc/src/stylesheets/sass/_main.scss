@@ -1,4 +1,14 @@
 @charset "UTF-8";
+#applianceFinder {
+	&.finder {
+		#finderMain { display: block; }
+		#finderResult { display: none; }
+	}
+	&.result {
+		#finderMain { display: none; }
+		#finderResult { display: block; }
+	}
+}
 #finderMain {
 	padding: vw(20) 0 0; position: relative; overflow: hidden; 
 	button:focus { outline: none; }
