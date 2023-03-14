@@ -625,8 +625,7 @@ function main() {
    $(document).on('click', '#interactionBtn', function () {
       $finderMain.css('display', 'none');
       $('#popup_' + _currentStep).css('display', 'block');
-      $('#popup_' + _currentStep).removeClass().addClass('popup_' + _currentStep).addClass('popup_step'); // class 초기화
-      $('#popup_' + _currentStep).addClass(interactiveClass);
+      $('#popup_' + _currentStep).removeClass().addClass(interactiveClass);
       $(window).scrollTop(headerHeight);
       if (idx === _lastFinderIndex) {
          $('.popup_' + _currentStep).find('.txt_wrap img').each(function (i) {
@@ -658,9 +657,9 @@ function main() {
    $popupClose.on('click', function () {
       $(this).parents('#popup_movie_step05').removeClass('open');
       $('.video_wrap').removeClass('play_video');
-      $('.popup_movie_step05 .popup_wrap > div').find('video').each(function (i) {
-         $('.popup_movie_step05 .popup_wrap > div').find('video')[i].currentTime = 0;
-         $('.popup_movie_step05 .popup_wrap > div').find('video')[i].pause();
+      $('#popup_movie_step05 .popup_wrap > div').find('video').each(function (i) {
+         $('#popup_movie_step05 .popup_wrap > div').find('video')[i].currentTime = 0;
+         $('#popup_movie_step05 .popup_wrap > div').find('video')[i].pause();
       });
    });
 
