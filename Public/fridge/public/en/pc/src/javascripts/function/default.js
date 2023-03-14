@@ -18,7 +18,8 @@ const $applianceFinder = $('#applianceFinder'),
    $popupStp3 = $applianceFinder.find('.popup_step03'),
    $subContain = $applianceFinder.find('.sub_contain'),
    $queTitle = $applianceFinder.find('.que_title'),
-   $finderResult = $applianceFinder.find('#finderResult');
+   $finderResult = $applianceFinder.find('#finderResult'),
+   $popupMovieStep05 = $applianceFinder.find('#popup_movie_step05');
 
 /* Button */
 const $nextBtn = $applianceFinder.find('#nextStepBtn'),
@@ -62,6 +63,11 @@ const WATER_ONLY = 'WATER_ONLY';
 const PURE_N_FRESH = 'PURE_N_FRESH';
 const INSTAVIEW = 'INSTAVIEW';
 const THINKQ = 'THINKQ';
+
+const DOOR_COOLING = 'DOOR_COOLING';
+const WINE_RACK = 'WINE_RACK';
+const FOLDING_SHELF = 'FOLDING_SHELF';
+const REVERSIBLE_DOOR = 'REVERSIBLE_DOOR';
 
 /* Energy Grade */
 const ENERGY_GRADE_A = 'ENERGY_GRADE_A';
@@ -199,8 +205,7 @@ const configData = {
    },
    step02: {
       questionText: 'step02 질문?',
-      allSelectOption: true,
-      resultContent: true,
+      allSelectOption: true,      
       option: [
          {
             value: CAPACITY_UNDER_400L,
@@ -309,7 +314,6 @@ const configData = {
       defaultScreenImg: 'step04/que_img01.png',
       allSelectOption: true,
       anythingOption: true,
-      resultContent: true,
       option: [
          {
             value: PLUMBED,
@@ -317,7 +321,7 @@ const configData = {
             relevantData: {
                description: 'PLUMBED',
                qnaScreenImg: 'step04/que_img02.png',
-               videoPopup: true,
+               videoPopup: 'video1',
             },
          },
          {
@@ -328,8 +332,8 @@ const configData = {
                   head: 'WATER_ONLY head',
                   detail: 'WATER_ONLY detail'
                },
+               videoPopup: 'video2',
                qnaScreenImg: 'step04/que_img03.png',
-               videoPopup: true,
             },
          },
          {
@@ -348,14 +352,16 @@ const configData = {
    step05: {
       questionText: 'step05 질문?',
       defaultScreenImg: 'step04/que_img01.png',
+      allSelectOption: true,
+      resultContent: true,
+      anythingOption: true,
       option: [
          {
             value: PURE_N_FRESH,
             content: 'PURE_N_FRESH',
             relevantData: {
                description: 'Goditi dell’acqua sempre fresca e ghiaccio a cubetti o tritato, grazie al collegamento diretto a un rubinetto dell’acqua dedicato.',
-               qnaScreenImg: 'step04/que_img02.png',
-               videoPopup: 'smart_ai_features',
+               qnaScreenImg: 'step04/que_img02.png',               
             }
          },
          {
@@ -365,8 +371,7 @@ const configData = {
                description: {
                   head: 'INSTAVIEW head',
                   detail: 'INSTAVIEW detail'
-               },
-               videoPopup: 'smart_ai_features',
+               },               
                qnaScreenImg: 'step04/que_img03.png',
             }
          },
@@ -381,25 +386,47 @@ const configData = {
       questionText: 'step06 질문?',
       defaultScreenImg: 'step06/que_img01.png',
       allSelectOption: true,
+      resultContent: true,
+      anythingOption: true,
       option: [
          {
-            value: PURE_N_FRESH,
-            content: 'PURE_N_FRESH',
+            value: DOOR_COOLING,
+            content: 'DOOR_COOLING',
             relevantData: {
-               description: 'Goditi dell’acqua sempre fresca e ghiaccio a cubetti o tritato, grazie al collegamento diretto a un rubinetto dell’acqua dedicato.',
+               description: 'DOOR_COOLING',
                qnaScreenImg: 'step06/que_img02.png',
-               videoPopup: 'smart_ai_features',
             }
          },
          {
-            value: INSTAVIEW,
-            content: 'INSTAVIEW',
+            value: WINE_RACK,
+            content: 'WINE_RACK',
             relevantData: {
                description: {
-                  head: 'INSTAVIEW head',
-                  detail: 'INSTAVIEW detail'
+                  head: 'WINE_RACK head',
+                  detail: 'WINE_RACK detail'
                },
-               videoPopup: 'smart_ai_features',
+               qnaScreenImg: 'step04/que_img03.png',
+            }
+         },
+         {
+            value: FOLDING_SHELF,
+            content: 'FOLDING_SHELF',
+            relevantData: {
+               description: {
+                  head: 'FOLDING_SHELF head',
+                  detail: 'FOLDING_SHELF detail'
+               },
+               qnaScreenImg: 'step04/que_img03.png',
+            }
+         },
+         {
+            value: REVERSIBLE_DOOR,
+            content: 'REVERSIBLE_DOOR',
+            relevantData: {
+               description: {
+                  head: 'REVERSIBLE_DOOR head',
+                  detail: 'REVERSIBLE_DOOR detail'
+               },
                qnaScreenImg: 'step04/que_img03.png',
             }
          },
@@ -413,6 +440,7 @@ const configData = {
    step07: {
       questionText: 'step07 질문?',
       allSelectOption: true,
+      resultContent: true,
       productColorImg: ['_black_popup_img', '_steel_popup_img', '_silver_popup_img', '_white_popup_img', '_beige_popup_img'], // step06 인터렉션 페이지 컬러매칭 이미지 뿌리기
       option: [
          {

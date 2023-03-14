@@ -18,7 +18,8 @@ const $applianceFinder = $('#applianceFinder'),
    $popupStp3 = $applianceFinder.find('.popup_step03'),
    $subContain = $applianceFinder.find('.sub_contain'),
    $queTitle = $applianceFinder.find('.que_title'),
-   $finderResult = $applianceFinder.find('#finderResult');
+   $finderResult = $applianceFinder.find('#finderResult'),
+   $popupMovieStep05 = $applianceFinder.find('#popup_movie_step05');
 
 /* Button */
 const $nextBtn = $applianceFinder.find('#nextStepBtn'),
@@ -62,6 +63,11 @@ const WATER_ONLY = 'WATER_ONLY';
 const PURE_N_FRESH = 'PURE_N_FRESH';
 const INSTAVIEW = 'INSTAVIEW';
 const THINKQ = 'THINKQ';
+
+const DOOR_COOLING = 'DOOR_COOLING';
+const WINE_RACK = 'WINE_RACK';
+const FOLDING_SHELF = 'FOLDING_SHELF';
+const REVERSIBLE_DOOR = 'REVERSIBLE_DOOR';
 
 /* Energy Grade */
 const ENERGY_GRADE_A = 'ENERGY_GRADE_A';
@@ -199,8 +205,7 @@ const configData = {
    },
    step02: {
       questionText: 'step02 질문?',
-      allSelectOption: true,
-      resultContent: true,
+      allSelectOption: true,      
       option: [
          {
             value: CAPACITY_UNDER_400L,
@@ -309,7 +314,6 @@ const configData = {
       defaultScreenImg: 'step04/que_img01.png',
       allSelectOption: true,
       anythingOption: true,
-      resultContent: true,
       option: [
          {
             value: PLUMBED,
@@ -317,7 +321,7 @@ const configData = {
             relevantData: {
                description: 'PLUMBED',
                qnaScreenImg: 'step04/que_img02.png',
-               videoPopup: true,
+               videoPopup: 'video1',
             },
          },
          {
@@ -328,8 +332,8 @@ const configData = {
                   head: 'WATER_ONLY head',
                   detail: 'WATER_ONLY detail'
                },
+               videoPopup: 'video2',
                qnaScreenImg: 'step04/que_img03.png',
-               videoPopup: true,
             },
          },
          {
@@ -348,14 +352,16 @@ const configData = {
    step05: {
       questionText: 'step05 질문?',
       defaultScreenImg: 'step04/que_img01.png',
+      allSelectOption: true,
+      resultContent: true,
+      anythingOption: true,
       option: [
          {
             value: PURE_N_FRESH,
             content: 'PURE_N_FRESH',
             relevantData: {
                description: 'Goditi dell’acqua sempre fresca e ghiaccio a cubetti o tritato, grazie al collegamento diretto a un rubinetto dell’acqua dedicato.',
-               qnaScreenImg: 'step04/que_img02.png',
-               videoPopup: 'smart_ai_features',
+               qnaScreenImg: 'step04/que_img02.png',               
             }
          },
          {
@@ -365,8 +371,7 @@ const configData = {
                description: {
                   head: 'INSTAVIEW head',
                   detail: 'INSTAVIEW detail'
-               },
-               videoPopup: 'smart_ai_features',
+               },               
                qnaScreenImg: 'step04/que_img03.png',
             }
          },
@@ -381,25 +386,47 @@ const configData = {
       questionText: 'step06 질문?',
       defaultScreenImg: 'step06/que_img01.png',
       allSelectOption: true,
+      resultContent: true,
+      anythingOption: true,
       option: [
          {
-            value: PURE_N_FRESH,
-            content: 'PURE_N_FRESH',
+            value: DOOR_COOLING,
+            content: 'DOOR_COOLING',
             relevantData: {
-               description: 'Goditi dell’acqua sempre fresca e ghiaccio a cubetti o tritato, grazie al collegamento diretto a un rubinetto dell’acqua dedicato.',
+               description: 'DOOR_COOLING',
                qnaScreenImg: 'step06/que_img02.png',
-               videoPopup: 'smart_ai_features',
             }
          },
          {
-            value: INSTAVIEW,
-            content: 'INSTAVIEW',
+            value: WINE_RACK,
+            content: 'WINE_RACK',
             relevantData: {
                description: {
-                  head: 'INSTAVIEW head',
-                  detail: 'INSTAVIEW detail'
+                  head: 'WINE_RACK head',
+                  detail: 'WINE_RACK detail'
                },
-               videoPopup: 'smart_ai_features',
+               qnaScreenImg: 'step04/que_img03.png',
+            }
+         },
+         {
+            value: FOLDING_SHELF,
+            content: 'FOLDING_SHELF',
+            relevantData: {
+               description: {
+                  head: 'FOLDING_SHELF head',
+                  detail: 'FOLDING_SHELF detail'
+               },
+               qnaScreenImg: 'step04/que_img03.png',
+            }
+         },
+         {
+            value: REVERSIBLE_DOOR,
+            content: 'REVERSIBLE_DOOR',
+            relevantData: {
+               description: {
+                  head: 'REVERSIBLE_DOOR head',
+                  detail: 'REVERSIBLE_DOOR detail'
+               },
                qnaScreenImg: 'step04/que_img03.png',
             }
          },
@@ -413,6 +440,7 @@ const configData = {
    step07: {
       questionText: 'step07 질문?',
       allSelectOption: true,
+      resultContent: true,
       productColorImg: ['_black_popup_img', '_steel_popup_img', '_silver_popup_img', '_white_popup_img', '_beige_popup_img'], // step06 인터렉션 페이지 컬러매칭 이미지 뿌리기
       option: [
          {
@@ -699,6 +727,7 @@ function main() {
          $selectContainer.empty();
          $nextBtn.attr('data-link-name', nextContent + ' : Q' + (idx + 1) + ' ' + $('#finderNav li').eq(idx).find('p').text());
          $description.css('display', 'none');
+         $popupMovieStep05.removeClass();
 
          /* Main Images Open */
          if (_defaultScreenImg) {
@@ -748,38 +777,6 @@ function main() {
          } else {
             // this.optionDisabled();
          }
-
-
-         let resultOptionArray = [];
-         let resultOption = [];
-         let finalResultContent = []; // 최종 텍스트 배열
-         Object.values(configData).some((element) => {
-            if (element.resultContent) {
-               resultOptionArray.push(element.option);
-               element.option.filter(function (item) {
-                  resultOption.push(item.value);
-               });
-            }
-         });
-         let intersection = resultOption.filter((it) => applianceFinder.selectedParameters.includes(it))
-         resultOptionArray.some((element) => {
-            let subArray = [];
-            element.some((item) => {
-               intersection.some((i) => {
-                  if (i === item.value) {
-                     subArray.push(item.content);
-                  }
-               })
-            })
-            finalResultContent.push(subArray);
-         });
-
-         subArray.forEach((element) => {
-            console.log(element)
-         })
-
-
-
       }
 
       /* 선택 옵션 active & 해제 */
@@ -824,7 +821,6 @@ function main() {
                   applianceFinder.filterUpdate(_value, false);
                }
             }
-
             if (idx !== 2) {
                $('.option_btn').each(function () {
                   if ($(this).attr('disabled') === undefined) {
@@ -835,11 +831,9 @@ function main() {
                });
             }
          }
-
          this.stateOptions();
          this.optionDataStructure(); // 옵션 구조 초기화 & 해당 옵션 내용 노출
          this.countingUpdate();
-
       }
 
       /* 전체 선택 옵션 active & 해제 */
@@ -924,7 +918,7 @@ function main() {
       /* 옵션의 상태 판단 & All Select */
       stateOptions() {
          enabledOptions = 0; // All Select 제외한 나머지 버튼 count
-         activeOption = 0; // 현재 클릭된 버튼 count 
+         activeOption = 0; // 현재 클릭된 버튼 count
 
          if (idx !== 2) {
             $('.option_btn').each(function () {
@@ -935,7 +929,6 @@ function main() {
                   }
                }
             });
-
             if ($('.anything_btn').length > 0) {
                enabledOptions--;
             }
@@ -944,7 +937,6 @@ function main() {
             }
             // console.log('enabledOptions(옵션토탈갯수) : ', enabledOptions, 'activeOption(acitve갯수) : ', activeOption)
          }
-
          $('.option_wrap').each(function () {
             let optionButtonNumber = $(this).find('.option_btn').index();
             let activeNumber = 0;
@@ -961,26 +953,25 @@ function main() {
 
       /* 필터 업데이트 추가 & 삭제 */
       filterUpdate(_value, _state) {
-         if (_state === true) {
+         if (_state === true) { // Add
             if (idx === 0) {
                this.selectedParameters = [];
                this.selectedParameters.push(_value);
-
                _currentStructural.option.filter((element) => {
                   if (element.value === applianceFinder.selectedParameters[0]) {
                      applianceFinder.selectedProduct = element.saveImg
                   }
                });
             } else {
-               this.selectedParameters.push(_value); // 선택된 value push
+               this.selectedParameters.push(_value); // Select Value Push
             }
          }
-         if (_state === false) {
+         if (_state === false) { // Delete
             this.selectedParameters = this.selectedParameters.filter(value => {
                return value !== _value;
             });
          }
-         // console.log(this.selectedParameters)
+         console.log('selectedParameters : ', this.selectedParameters);
       }
 
       /* counting */
@@ -991,7 +982,6 @@ function main() {
             this.stepCount.push($('.option_btn.active').length);
          }
       }
-
 
       /* 선택한 필터 제품 삭제 */
       matchingProductsDelete() {
@@ -1019,9 +1009,8 @@ function main() {
             });
          }
 
-
          this.stateOptions();
-         this.taggingEvent(); // 태깅 함수
+         // this.taggingEvent(); // 태깅 함수
          this.sprayData(true);
       }
 
@@ -1053,11 +1042,8 @@ function main() {
 
          concatArr = '';
          for (let [key, value] of Object.entries(selectProduct)) {
-            // console.debug('으하하하하 ', productSpec[value]);
             concatArr += Object.values(productSpec[value]) + ",";
          }
-
-         // console.log(concatArr);
 
          let concatArrDuplicationDel = [...new Set(concatArr.split(","))];
 
@@ -1082,9 +1068,9 @@ function main() {
          $learnMoreBtn.removeClass('active');
          $learnMoreBtn.removeAttr('data-popup');
          $learnMoreBtn.removeAttr('id');
-         $('.popup_movie_step05 .popup_wrap > div').css('display', 'none');
          $loadMoreBtn.removeAttr('data-link-name');
          $learnMoreBtn.removeAttr('data-link-name');
+         $popupMovieStep05.removeClass();
 
          // 질문 텍스트 / 디스크립션 생성, 삭제
          if (idx === 2) {
@@ -1109,6 +1095,7 @@ function main() {
             $description.css('display', 'none');
             $queTitle.css('display', 'block');
             applianceFinder.sprayData(false);
+            
          }
       }
 
@@ -1130,7 +1117,7 @@ function main() {
          if (!exposureData) {
             $queTitle.css('display', 'block');
             $description.css('display', 'none');
-         }
+         }      
 
          /* 해당 옵션 데이터 노출 */
          if (boolean && exposureData && exposureData.relevantData) {
@@ -1161,10 +1148,12 @@ function main() {
             if (exposureData.relevantData.interactionPage) {
                $learnMoreBtn.attr('id', 'interactionBtn');
                $learnMoreBtn.addClass('active');
+               interactiveClass = this.selectedProduct.class;
             }
             if (exposureData.relevantData.videoPopup) {
                $learnMoreBtn.attr('id', 'videoMoreBtn');
                $learnMoreBtn.addClass('active');
+               $popupMovieStep05.removeClass().addClass(exposureData.relevantData.videoPopup);
             }
             if (idx === _lastFinderIndex) {
                $qnaImgWrap.attr('style', 'background-image:url(' + imgPath + 'step07/' + this.selectedProduct.class + '_' + exposureData.relevantData.qnaScreenImg + ')');
@@ -1187,76 +1176,64 @@ function main() {
          console.log('태깅함수');
       }
 
+      /* 결과 페이지 */
       resultChoice() {
          $applianceFinder.removeClass().addClass('result');
          $centerImgWrap.attr('style', 'background-image: url(' + imgPath + this.selectedProduct.lastScreenImg + ')') // 배경 이미지 변경
-         // $(window).scrollTop(headerHeight);
+         $(window).scrollTop(headerHeight);
 
-         let _valueArray = [[], [], []];
-         let _cont;
+         let resultOptionArray = [];
+         let resultOption = [];
+         let finalResultContent = []; // 최종 선택 컨텐츠 Array
+         Object.values(configData).some((element) => {
+            if (element.resultContent) {
+               resultOptionArray.push(element.option);
+               element.option.filter(function (item) {
+                  resultOption.push(item.value);
+               });
+            }
+         });
 
+         /* 선택한 필터값과 옵션값 중복되는 값 추출 */
+         let intersection = resultOption.filter((it) => applianceFinder.selectedParameters.includes(it))
 
+         /* 선택한 컨텐츠 추출 */
+         resultOptionArray.some((element, index) => {
+            let subArray = [];
+            element.some((item) => {
+               intersection.some((i) => {
+                  if (i === item.value) {
+                     subArray.push(item.content);
+                  }
+               })
+            })
+            // 컬러 색상 3번째 순서로
+            if (index === 3) {
+               finalResultContent.splice(finalResultContent.length - 1, 0, subArray);
+            } else {
+               finalResultContent.push(subArray);
+            }
+         });
 
-
-
-
-         // for (let i = 0; i < selectedParameters.length; i++) {
-         //    let _selectValue = selectedParameters[i].split('=')[1];
-         //    for (let j = 0; j < configData.htmlData.length; j++) {
-         //       for (let p = 0; p < configData.htmlData[j].length; p++) {
-         //          let Html = configData.htmlData[j][p];
-         //          // 선택된 value 와 매칭, resultContent 가 있으면 해당 컨텐츠 추출
-         //          if (Html.value === _selectValue && Html.resultContent !== undefined) {
-         //             _cont = Html.content.replace(/(<([^>]+)>)/ig, ''); // br 태그 삭제
-         //             if (Html.resultContent === 'step01') {
-         //                _valueArray[0].push(_cont);
-         //             } else if (Html.resultContent === 'step05') {
-         //                _valueArray[1].push(_cont);
-         //             } else if (Html.resultContent === 'step06') {
-         //                _valueArray[2].push(_cont);
-         //             }
-         //          }
-         //       }
-         //    }
-         // }
-
-         // 선택한 content 뿌리기
-         // for (let i = 0; i < _valueArray.length; i++) {
-         //    let _selectResultTxt = '';
-         //    for (let j = 0; j < _valueArray[i].length; j++) {
-         //       if (i === 0) {
-         //          _selectResultTxt += _valueArray[i][j] + '<span>.</span>';
-         //       } else if (i === 1) {
-         //          if (j !== _valueArray[i].length - 1) {
-         //             _selectResultTxt += _valueArray[i][j] + '<span> & </span>';
-         //          } else {
-         //             _selectResultTxt += _valueArray[i][j] + '<span>.</span>';
-         //          }
-         //       } else if (i === 2) {
-         //          if (j !== _valueArray[i].length - 1) {
-         //             _selectResultTxt += _valueArray[i][j] + '<span>, </span>';
-         //          } else {
-         //             _selectResultTxt += _valueArray[i][j] + '';
-         //          }
-         //       }
-         //    }
-         //    $('#finderResult .txt_wrap dl').eq(i).append('<dd>' + _selectResultTxt + '</dd>');
-         // }
-
-         // step4 에서 아무것도 선택하지 않았을 때 텍스트 변경
-         // if (_valueArray[1].length < 1) {
-         //    $('#finderResult dl:nth-of-type(2)').remove();
-         //    $('#finderResult .txt_wrap').addClass('remove_color');
-         // }
-
+         /* 데이터 뿌리기 */
+         finalResultContent.forEach((stepElement, arrayIndex) => {
+            let resultText = '';
+            stepElement.some((element, index) => {
+               if (index !== stepElement.length - 1) {
+                  if (arrayIndex === 1) {
+                     resultText += element + '<span> & </span>';
+                  } else {
+                     resultText += element + '<span>, </span>';
+                  }
+               } else {
+                  resultText += element + '<span>.</span>';
+               }
+            });
+            $finderResult.find('dl').eq(arrayIndex).find('dd').append(resultText);
+         });
          // taggingEvent(_last); // 태깅 함수
       }
    }
-
-
-
-
-
 
    const applianceFinder = new Subject();
 
@@ -1269,8 +1246,7 @@ function main() {
       if (idx < _lastFinderIndex + 1) {
          idx++;
       }
-      idx === _lastFinderIndex + 1 && applianceFinder.resultChoice() // 마지막 스텝에서 result 화면실행
-      applianceFinder.setMarkupDate();
+      idx === _lastFinderIndex + 1 ? applianceFinder.resultChoice() : applianceFinder.setMarkupDate()
    });
 
    /* Back Button */
@@ -1304,13 +1280,13 @@ function main() {
    /* Interactive Popup Button */
    $(document).on('click', '#interactionBtn', function () {
       $finderMain.css('display', 'none');
-      $('.popup_' + _currentStep).css('display', 'block');
-      $('.popup_' + _currentStep).removeClass().addClass('popup_' + _currentStep).addClass('popup_step'); // class 초기화
-      $('.popup_' + _currentStep).addClass(interactiveClass);
+      $('#popup_' + _currentStep).css('display', 'block');
+      $('#popup_' + _currentStep).removeClass().addClass('popup_' + _currentStep).addClass('popup_step'); // class 초기화
+      $('#popup_' + _currentStep).addClass(interactiveClass);
       $(window).scrollTop(headerHeight);
-      if (idx === 5) {
+      if (idx === _lastFinderIndex) {
          $('.popup_' + _currentStep).find('.txt_wrap img').each(function (i) {
-            $(this).attr('src', imgPath + 'step06/' + selectedProduct[0].class + currentStep.productColorImg[i] + '.png');
+            $(this).attr('src', imgPath + 'step07/' + interactiveClass + currentStep.productColorImg[i] + '.png');
          });
       }
    });
@@ -1318,13 +1294,13 @@ function main() {
    /* Size Popup Button */
    $(document).on('click', '.caution_open_btn', function () {
       $popupStp3.css('display', 'flex');
-      $('.popup_step03 .popup_wrap > div').css('display', 'none');
+      // $('.popup_step03 .popup_wrap > div').css('display', 'none');
       $('.popup_step03 .' + selectedProduct[0].class).css('display', 'block');
    });
 
    /* Video Popup Button */
    $(document).on('click', '#videoMoreBtn', function () {
-      $('.popup_movie_step05').css('display', 'block');
+      $popupMovieStep05.addClass('open');
    });
 
    /* Detail Description Button */
@@ -1336,7 +1312,7 @@ function main() {
 
    /* Video Close Button */
    $popupClose.on('click', function () {
-      $(this).parents('.popup_step').css('display', 'none');
+      $(this).parents('#popup_movie_step05').removeClass('open');
       $('.video_wrap').removeClass('play_video');
       $('.popup_movie_step05 .popup_wrap > div').find('video').each(function (i) {
          $('.popup_movie_step05 .popup_wrap > div').find('video')[i].currentTime = 0;
@@ -1346,9 +1322,8 @@ function main() {
 
    /* Interactive Close Button */
    $interactionClose.on('click', function () {
-      $quickFinder.css('display', 'block');
-      $('.popup_step').css('display', 'none');
-      $('.popup_' + currentStep.finderStep).removeClass().addClass('popup_' + currentStep.finderStep).addClass('popup_step'); // class 초기화
+      $finderMain.css('display', 'block');
+      $('#popup_' + _currentStep).css('display', 'none');
    });
 
    // $('#selectAgainCloseBtn').on('click', function () {
